@@ -1,35 +1,35 @@
 // Copyright 13-Nov-2019 ºDeme
 // GNU General Public License - V3 <http://www.gnu.org/licenses/>
 
-( @<Element>
+( @+<Element>
   (e "return e.files.length;") ffi,i
-) inputSize =>
+@-i) inputSize =>
 
-( @i<Element>
+( @+<Element>i
   (e ix "return e.files[0];", File) ffi,o
-) inputGet =>
+@-<File>) inputGet =>
 
-( @<File>
+( @+<File>
   (f "return f.lastModified;") ffi,f
-) lastModified =>
+@-f) lastModified =>
 
-( @<File>
+( @+<File>
   (f "return f.name;") ffi,s
-) name =>
+@-s) name =>
 
-( @<File>
+( @+<File>
   (f "return f.size;") ffi,i
-) size =>
+@-i) size =>
 
-( @<File>
+( @+<File>
   (f "return f.type;") ffi,s
-) type =>
+@-s) type =>
 
-( @ii<File>
+( @+<File>ii::
   (f start end "return f.slice(start, end);", JsBlob) ffi,o
-) slice =>
+@-<JsBlob>) slice =>
 
-( @illll<File>:: #
+( @+<File>lllli:: #
   step# =; FnFail =; fnEnd# =>; fnAppend# =>; fnStart =>; File# =
   step# wrap,ref : Counter# =;
 
@@ -63,4 +63,13 @@
   ) Ch chan,recv
 
   Ch File# fnStart
-) read =>
+@-) read =>
+/// @<File>lllli -> @
+///   File: Client file.
+///   fnStart: Function '@<File>l -> @' ([Channel, File] -> []). Initializes
+///     reading. At the end send "" through Channel.
+///   fnAppend: Function '@l<Blob> -> @' ([Channel, Bytes] -> []). Send
+///     Byte to server. At the end send "" through Channel.
+///   fnEnd: Function '@ -> @'. Runs after all data is send.
+///   fnFail: Funciton '@ -> @'. Runs if an error happens.
+///   step: Number of bytes sent each time.

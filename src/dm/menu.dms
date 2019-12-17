@@ -4,7 +4,7 @@
 "wg" import
 "location" import
 
-( @i :: withSeparator? =;
+( @+i:: withSeparator? =;
   {
     "withSeparator?": withSeparator?
     "selected": ""
@@ -13,11 +13,11 @@
     "lview": "div" {style: "line-height:22px;"} ui,$+
     "rview": "div" ui,$+
   } map,from
-@m) new =>
+@-m) new =>
 
 // View
 
-( @m :: Mn =
+( @+m:: Mn =
   Mn .withSeparator?
               ("border-right: 1px solid #000000;")
               ("")
@@ -42,67 +42,63 @@
         } [
           (Mn .rview) ]]]
     "hr" ] ui,$+
-) wg =>
+@-<Element>) wg =>
 
 // Control
 
-( @m :: Mn =
+( @+m:: Mn =
   Mn : "lopts" : [] data : obj,put
   Mn : "lview" : "div" {style: "line-height:22px;"} ui,$+ : obj,put
   Mn : "ropts" : [] data : obj,put
   Mn : "rview" : "div" ui,$+ : obj,put
-) reset =>
+@-) reset =>
 
-( @<Element>m :: El =; Mn =
+( @+m<Element>:: El =; Mn =
   Mn .lopts El lst,push+ : Opts =
   Mn .lview {removeAll} Opts : ui,$
-) addLeft =>
+@-) addLeft =>
 
-( @<Element>m :: El =; Mn =
+( @+m<Element> :: El =; Mn =
   Mn .ropts El lst,push0+ : Opts =
   Mn .rview {removeAll} Opts : ui,$
-) addRight =>
+@-) addRight =>
 
-( @sm :: # id =; Mn =
+( @+ms:: id =; Mn =
   "menu_" id + : mId# =
-  (@<Element> El =
+  (@+<Element> El =
     El (att id) ui,prop : att =
 
     att "" !=
     (El { class: (att mId# == ("frame") ("link") elif) } ui,$)
     if
-  ) : fn =>
+  @-) : fn =>
 
   Mn .lopts (fn) lst,each
   Mn .ropts (fn) lst,each
-) setSelected =>
+@-) setSelected =>
 
 // static
 
-("span" {text: " · "} ui,$+ :: @<Element>) separator =>
+(@+:: "span" {text: " · "} ui,$+ @-<Element>) separator =>
 
-("span" {text: " | "} ui,$+ :: @<Element>) separator2 =>
+(@+:: "span" {text: " | "} ui,$+ @-<Element>) separator2 =>
 
-( @lss :: # Fn# =; tx =; id =
+( @+ssl:: # Fn# =; tx =; id =
   Fn# wg,link { att: id ("menu_" id +), class: "link", text: tx } ui,$+
-@<Element>) mkOption =>
+@-<Element>) mkOption =>
 
-( @sss # module =; tx=; id =
-  module dup "" != () ("&" +) if : module =
-  location,href : hpath =;
-  hpath "?" str,index : ix =;
-  hpath ix -1 == () (ix str,left) if : hpath =
-  hpath "#" str,index : ix =;
-  hpath ix -1 == () (ix str,left) if : hpath =
+( @+sss tx =; id =; module =
+  module dup "" == () ("&" +) elif : module =
+  location,hrefBase : hpath =;
 
   "a" {
-    href: ("${hpath}?${module}${id}")
-    id: ("menu_" id +)
+    att: href ("${hpath}?${module}${id}")
+    att: id ("menu_" id +)
     text: tx
   } ui,$+
-@<Element>) mkModule =>
+@-<Element>) mkLink =>
 
-(@l :: # FnBye# =
+( @+l:: # FnBye# =
   FnBye# wg,link {} [ ("cross" wg,img) { style: "vertical-align:bottom" } ]
     ui,$+
-@<Element>) mkClose =>
+@-<Element>) mkClose =>

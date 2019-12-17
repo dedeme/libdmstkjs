@@ -1,7 +1,9 @@
 // Copyright 02-Nov-2019 ºDeme
 // GNU General Public License - V3 <http://www.gnu.org/licenses/>
 
-( @ss:: tp =; targetId =
+"location" import
+
+( @+ss:: tp =; targetId =
   "input" {
     att: type tp
     onEv: {
@@ -22,13 +24,13 @@
       )
     }
   } ui,$+
-@<Element>) fieldPass. =>
+@-<Element>) fieldPass. =>
 
-(@s:: "text" this,fieldPass. :: @<Element>) field =>
+(@+s:: "text" this,fieldPass. @-<Element>) field =>
 
-(@s:: "password" this,fieldPass. :: @<Element>) pass =>
+(@+s:: "password" this,fieldPass. @-<Element>) pass =>
 
-( @<Element>:: El =
+( @+<Element>:: El =
   El {
     onEv : {
       keydown
@@ -53,17 +55,54 @@
       )
     }
   } ui,$+
-@<Element>) changePoint =>
+@-<Element>) changePoint =>
 
-( @s:: id =
+( @+s:: id =
   id "." str,index -1 == (id ".png" +) (id) elif : id =
   "img" { att: src ("img/" id +) } ui,$+
-@<Element>) img =>
+@-<Element>) img =>
 
-( @s
-  this,img { style: "opcity:0.4" } ui,$+
-@<Element>) lightImg =>
+( @+s
+  this,img { style: "opacity:0.4" } ui,$+
+@-<Element>) lightImg =>
 
-( @l:: # fn# =>
+( @+l:: # fn# =>
   "span" { style "cursor:pointer", on: {click: (fn#)} } ui,$+
-@<Element>) link =>
+@-<Element>) link =>
+
+( @+
+  ((s "return decodeURI(s);") ffi,s)
+  decodeURI =>
+
+  location,search : search =
+
+  {} map,from
+  search "" !=
+  (
+    search 1 str,right "&" str,split
+    ( ix =; e =
+      e "=" str,index : i =
+      i -1 ==
+      ( ix toStr : e decodeURI : map,put+)
+      ( e : i : str,left :: e : i 1 + : str,right :: map,put+)
+      elif
+    )
+      lst,eachIx
+  )
+  if
+@-m) url =>
+/// @ -> @m
+/// Extracts variables of URL. Returns a map with next rules:
+///   -Expresions 'key = value' are changed in {"key" : "value"}.
+///   -Expresion only with value are changes by {"its-order-number" "value"}.
+///     (order-number is zero based).
+/// Example:
+///   foo.com/bar?v1&k1=v2&v3 -> {"0" : v1, "k1" : v2, "2" : v3}
+/// NOTE: keys and values are not trimized.
+/// NOTE: If there is no variable, return is an empty object.
+
+( @+s img =
+  "div" { style: "position: fixed;bottom: 0px;right: 20px" } [
+      ((("window.scroll(0,0);") ffi,v) this,link) {} [ (img this,img) ]]
+      ui,$+
+@-<Element>) upTop =>

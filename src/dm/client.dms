@@ -3,75 +3,74 @@
 
 300 : klen. =
 
-( @s
+( @+s
   this,klen. cryp,key
-@s) crypPass =>
-/// s::Tx -> s::Code
-///   Tx  : Text to encrypt
-///   Code: Encripted text
+@-s) crypPass =>
+/// s::tx -> s::code
+///   tx  : Text to encrypt
+///   ----
+///   code: Encripted text
 
-( @lsi :: # FExpired# =; appName# =; dmCgi?# =
+( @+isl:: FExpired =; appName =; dmCgi? =
   {
-    "dmCgi?": dmCgi?#
-    "appName": appName#
-    "FExpired": FExpired#
+    "dmCgi?": dmCgi?
+    "appName": appName
+    "FExpired": FExpired
     "connectionId": ""
   } map,from
-@m) new =>
-/// (i::dmcgi?, s::appName, (@ @)::FExpired) -> m::Client
-///   dmCgi?: If is 'true' server is accessed through 'dmcgi'.
-///   appName: Used to customize LocalStore.
+@-m) new =>
+/// i::dmcgi?, s::appName, (@ -> @)::FExpired -> m::Client
+///   dmCgi?  : If is 'true' server is accessed through 'dmcgi'.
+///   appName : Used to customize LocalStore.
 ///   FExpired: Function to launch expired page.
-///   return: Object with following fields:
-///     - dmCgi?
-///     - appName
-///     - FExpirec
-///     - connectionId (String): Connection identifier
+///   --------
+///   Client  : Map with reserved fields.
 
-( @m :: Cl =
+( @+m:: Cl =
   "Client_sessionId_" : Cl .appName : + store,take
   ()
-  ( "0" b64.encode)
+  ( "0" b64,encode)
   wrap,option
-@s) sessionId. =>
+@-s) sessionId. =>
 
-( @sm :: value =; Cl =
+( @+ms:: value =; Cl =
   "Client_sessionId_" Cl .appName + : value : store,put
-) setSessionId. =>
+@-) setSessionId. =>
 
-( @m :: Cl =
+( @+m:: Cl =
   "Client_key_" : Cl .appName : + store,take
   ()
-  ( "0" b64.encode)
+  ( "0" b64,encode)
   wrap,option
-@s) key. =>
+@-s) key. =>
 
-( @sm :: value =; Cl =
+( @+ms:: value =; Cl =
   "Client_key_" Cl .appName + : value : store,put
-) setKey. =>
+@-) setKey. =>
 
-( @sm :: value =; Cl =
+( @+ms:: value =; Cl =
   "Client_user_" Cl .appName + : value : store,put
-) setUser. =>
+@-) setUser. =>
 
-( @lsm :: # Fn# =; rq# =; Cl# = //  rq is in B64
+( @+msl:: # Fn# =; rq# =; Cl# = //  rq is in B64
   Cl# .dmCgi? ("cgi-bin/ccgi.sh") ("") elif
     Cl# .appName  ":" rq# + +
       Fn#
       com,localRq
-) sendServer. =>
+@-) sendServer. =>
 
-( @m :: Cl =
+( @+m:: Cl =
   "Client_user_" : Cl .appName : + store,take
   ()
-  ( "0" b64.encode)
+  ( "0" b64,encode)
   wrap,option
-@s) user =>
-/// (m::Cl) -> s::Id
+@-s) user =>
+/// m::Cl -> s::Id
 ///   Cl: Client
+///   --
 ///   Id: Identifier.
 
-( @lm :: # fn# =>; Cl# =
+( @+ml:: # fn# =>; Cl# =
   Cl#
   dup this,sessionId. : sessionId# =
 
@@ -81,6 +80,7 @@
         (
           rp# sessionId# cryp,decryp js,ro : Jsrp# =
           Jsrp# .key js,rs : key# =
+
           key# "" : ==
           ( 0 fn#)
           (
@@ -102,13 +102,14 @@
       )
       wrap,either
     ) this,sendServer.
-) connect =>
-/// (m::Cl, (@i @)::fn) => @
+@-) connect =>
+/// m::Cl, (@i -> @)::fn => @
 ///   Cl: Client
 ///   fn: Callback that receives '1' or '0' acording as conncection was
 ///       successfuly or not.
+///   ==
 
-( @lissm :: # fn# =>; expiration =; pass =; user# =; Cl# =
+( @+mssil:: # fn# =>; expiration =; pass =; user# =; Cl# =
   Cl# .appName this,crypPass : key# =
   pass this,crypPass : p# =
   expiration ("1") ("0") elif : exp =
@@ -141,17 +142,18 @@
       )
       wrap,either
     ) this,sendServer.
-) authentication =>
-/// (m::Cl, s::user, s::pass, i::expiration, (@i @)::fn) => @
-///   Cl: Client.
-///   user: User identifier.
-///   pass: User password.
+@-) authentication =>
+/// m::Cl, s::user, s::pass, i::expiration, (@i -> @)::fn => @
+///   Cl        : Client.
+///   user      : User identifier.
+///   pass      : User password.
 ///   expiration: 1 means temporary connection and 0 permanent one.
-///   fn: Callback which receive:
+///   fn        : Callback which receive:
 ///     0: If authentication failed.
 ///     1: If authentication succeeded.
+///   ==========
 
-( @ilmm :: # withConnectionId =; fn# =>; Rq =; Cl# =
+( @+mmli:: # withConnectionId =; fn# =>; Rq =; Cl# =
   withConnectionId (Rq : "connectionId" : Cl# .connectionId js,ws : map,put) if
 
   Cl#
@@ -189,20 +191,22 @@
       )
       wrap,either
     ) this,sendServer.
-) send. =>
+@-) send. =>
 
-( @lmm 0 this,send.)
+( @+mml 0 this,send. @-)
 rq =>
-/// (m::Cl, m::Rq, (@m @)::fn) => @
+/// m::Cl, m::Rq, (@m -> @)::fn => @
 /// Request without connection identifier.
 ///   Cl: Client
 ///   Rq: Request. It is a map of JSON.
 ///   fn: Callback which receive a map of JSON.
+///   ==
 
-( @lmm 1 this,send.)
+( @+mml 1 this,send. @-)
 send =>
-/// (m::Cl, m::Rq, (@m @)::fn) => @
+/// m::Cl, m::Rq, (@m -> @)::fn => @
 /// Request with connection identifier.
 ///   Cl: Client
 ///   Rq: Request. It is a map of JSON.
 ///   fn: Callback which receive a map of JSON.
+///   ==

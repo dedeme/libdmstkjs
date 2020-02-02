@@ -101,7 +101,6 @@
 
 ( @+l:: # FnBye# =
   FnBye# wg,link {} [
-      ("cross" wg,img) { style: "vertical-align:bottom" } [] ui,$+
-    ]
-    ui,$+
+      "cross" wg,img { style: "vertical-align:bottom" } [] ui,$+
+    ] ui,$+
 @-<Element>) mkClose =>
